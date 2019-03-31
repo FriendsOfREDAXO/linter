@@ -6,7 +6,7 @@ Aktuell werden folgende Dateien überprüft:
 
 - PHP Dateien
 - YAML Dateien
-- JSON Dateiem
+- JSON Dateien
 
 ## Setup
 
