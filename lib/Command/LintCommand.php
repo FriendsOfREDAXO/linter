@@ -11,7 +11,7 @@ class LintCommand extends Command
 {
     protected function configure()
     {
-        $this->setName('lint')
+        $this->setName('rexlint')
             ->addArgument('dir', InputArgument::OPTIONAL, 'The directory', '.')
         ;
     }
