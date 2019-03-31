@@ -2,7 +2,6 @@
 $src = __DIR__;
 
 $finder = PhpCsFixer\Finder::create()
-    ->exclude('fragments')
     ->in($src)
 ;
 return PhpCsFixer\Config::create()
