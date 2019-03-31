@@ -38,6 +38,6 @@ Account-Settings öffnen:
 Repository aktivieren:
 ![image](https://user-images.githubusercontent.com/120441/55288776-dc826180-53bc-11e9-9625-27a87c4d1544.png)
 
--> Wenn man jetzt ein neues Pull Request öffnen, laufen die Checks und man bekommt entweder ein OK oder ein KO:
+-> Wenn man jetzt ein neues Pull Request öffnet, laufen die Checks und man bekommt entweder ein OK oder ein KO:
 
 ![image](https://user-images.githubusercontent.com/120441/55288790-050a5b80-53bd-11e9-90aa-455464003fb8.png)
