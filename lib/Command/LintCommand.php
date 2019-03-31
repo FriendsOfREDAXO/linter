@@ -12,13 +12,18 @@ class LintCommand extends Command {
     protected function configure()
     {
         $this->setName('lint')
-            ->addArgument('dir', InputArgument::OPTIONAL, 'The directory')
+            ->addArgument('dir', InputArgument::OPTIONAL, 'The directory', '.')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $process = new Process(['find', '.', '-name', '*.yml', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/yaml-lint', '{}', ';']);
+        $dir = $input->getArgument('dir');
+        $this->lint(['find', $dir, '-name', '*.yml', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/yaml-lint', '{}', ';']);
+    }
+
+    private function lint(array $cmd) {
+        $process = new Process($cmd);
         $process->run();
 
         // executes after the command finishes
@@ -27,5 +32,6 @@ class LintCommand extends Command {
         }
 
         echo $process->getOutput();
+
     }
 }
