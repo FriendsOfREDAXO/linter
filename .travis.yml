@@ -2,6 +2,10 @@ language: php
 
 dist: xenial
 
+cache:
+  directories:
+  - $HOME/.composer/cache
+
 before_install:
   - phpenv config-rm xdebug.ini || echo "xdebug not available"
 
