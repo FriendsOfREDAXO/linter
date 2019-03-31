@@ -1,6 +1,6 @@
 {
     "name": "friendsofredaxo/linter",
-    "description": "Linter für REDAXO",
+    "description": "Linter commandline für REDAXO",
     "license": "MIT",
 
     "require": {
