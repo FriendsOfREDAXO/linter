@@ -12,6 +12,6 @@ cache:
 before_install:
   - phpenv config-rm xdebug.ini || echo "xdebug not available"
 
-  script:
-    - composer install
-    - php bin/rexlint
+script:
+  - composer install
+  - php bin/rexlint
