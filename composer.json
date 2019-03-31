@@ -17,6 +17,6 @@
     },
 
     "bin": [
-        "rexlint"
+        "bin/rexlint"
     ]
 }
