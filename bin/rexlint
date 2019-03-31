@@ -9,6 +9,6 @@ $application = new Application();
 
 $lintCmd = new LintCommand();
 $application->add($lintCmd);
-$application->setDefaultCommand($lintCmd->getName());
+$application->setDefaultCommand($lintCmd->getName(), true);
 
 $application->run();
