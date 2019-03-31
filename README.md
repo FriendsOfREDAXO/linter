@@ -28,7 +28,7 @@ script:
     - vendor/bin/rexlint
 ```
 
-### Auf https://travis-ci.org bis github anmelden und das repository für travis aktivieren.
+### Auf https://travis-ci.org via github-login anmelden und das Repository für TravisCI aktivieren.
 
 Beispiel für FriendsOfREDAXO/minibar:
 
