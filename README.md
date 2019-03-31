@@ -1,5 +1,11 @@
 # linter
-🐣 Linter commandline für REDAXO
+Linter commandline für REDAXO
+
+Mit diesem tool ist es möglich beliebige Dateien bzgl. gängigen Fehlern zu überprüfen.
+Aktuell werden folgende Dateien überprüft:
+
+- PHP Dateien
+- YAML Dateien
 
 ## Setup
 
