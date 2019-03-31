@@ -10,4 +10,4 @@ jobs:
     -   php: 7.1
         script:
         - composer install
-        - php bin/rexlint .
+        - php bin/rexlint
