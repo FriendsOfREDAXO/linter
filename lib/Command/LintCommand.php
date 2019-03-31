@@ -22,7 +22,7 @@ class LintCommand extends Command
 
         $processes = [];
         $processes[] = $this->asyncProc(['find', $dir, '-name', '*.yml', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/yaml-lint', '{}', ';']);
-        $processes[] = $this->asyncProc(['find', $dir, '-name', '*.php', '!', '-path', '*/vendor/*', '-exec', 'php', '-l', '{}', '2>&1', ';']);
+        $processes[] = $this->asyncProc(['vendor/bin/parallel-lint', '--exclude',  'vendor', $dir]);
 
         foreach ($processes as $process) {
             $process->wait();
