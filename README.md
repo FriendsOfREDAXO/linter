@@ -19,7 +19,7 @@ Aktuell werden folgende Dateien überprüft:
 language: php
 
 php:
-    - '7.1'
+    - '7.1' # REDAXO5.8+ min-php version
 
 cache:
   directories:
