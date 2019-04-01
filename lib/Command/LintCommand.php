@@ -23,6 +23,7 @@ final class LintCommand extends Command
         $processes = [];
         $processes[] = $this->asyncProc(['find', $dir, '-name', '*.yml', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/yaml-lint', '{}', ';']);
         $processes[] = $this->asyncProc(['vendor/bin/parallel-lint', '--exclude',  'vendor', $dir]);
+        $processes[] = $this->asyncProc(['find', $dir, '-name', '*.json', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/jsonlint', '{}', ';']);
 
         foreach ($processes as $process) {
             $process->wait();
