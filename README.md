@@ -22,8 +22,8 @@ php:
     - '7.1' # REDAXO5.8+ min-php version
 
 cache:
-  directories:
-  - $HOME/.composer/cache
+    directories:
+        - $HOME/.composer/cache
   
 before_install:
     - phpenv config-rm xdebug.ini || echo "xdebug not available"
