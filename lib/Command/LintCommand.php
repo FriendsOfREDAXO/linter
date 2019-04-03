@@ -25,19 +25,21 @@ final class LintCommand extends Command
         //$processes[] = $this->asyncProc(['vendor/bin/parallel-lint', '--exclude',  'vendor', $dir]);
         //$processes[] = $this->asyncProc(['find', $dir, '-name', '*.json', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/jsonlint', '{}', ';']);
 
-        $syncP = new Process(['npm', 'install', '-v', 'csslint']);
+        $syncP = new Process(['npm', 'install', 'csslint']);
         $syncP->run();
-        echo $syncP->getOutput();
         if (!$syncP->isSuccessful()) {
             throw new ProcessFailedException($syncP);
         }
-        $syncP = new Process(['csslint']);
-        $syncP->run();
         echo $syncP->getOutput();
+
+        $syncP = new Process(['node_modules/.bin/csslint']);
+        $syncP->run();
         if (!$syncP->isSuccessful()) {
             throw new ProcessFailedException($syncP);
         }
-        $processes[] = $this->asyncProc(['find', $dir, '-name', '*.css', '!', '-path', '*/vendor/*', '-exec', 'node_modules/.bin/csslint', '{}', ';']);
+        echo $syncP->getOutput();
+
+        $processes[] = $this->asyncProc(['find', $dir, '-name', '*.css', '!', '-path', '*/vendor/*', '-exec', 'node_modules/.bin/csslint', '--ignore', 'order-alphabetical,important,ids,font-sizes,floats', '{}', ';']);
         
         foreach ($processes as $process) {
             $process->wait();
