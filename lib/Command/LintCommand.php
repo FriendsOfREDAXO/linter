@@ -22,19 +22,20 @@ final class LintCommand extends Command
         $dir = $input->getArgument('dir');
 
         $processes = [];
-        $processes[] = $this->asyncProc(['find', $dir, '-name', '*.yml', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/yaml-lint', '{}', '+']);
-        $processes[] = $this->asyncProc(['vendor/bin/parallel-lint', '--exclude',  'vendor', $dir]);
-        $processes[] = $this->asyncProc(['find', $dir, '-name', '*.json', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/jsonlint', '{}', '+']);
+        $processes['YAML checks'] = $this->asyncProc(['find', $dir, '-name', '*.yml', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/yaml-lint', '{}', '+']);
+        $processes['PHP checks'] = $this->asyncProc(['vendor/bin/parallel-lint', '--exclude',  'vendor', $dir]);
+        $processes['JSON checks'] = $this->asyncProc(['find', $dir, '-name', '*.json', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/jsonlint', '{}', '+']);
 
         $this->syncProc(['npm', 'install', 'csslint']);
 
         // we only want to find errors, no style checks
         $csRules = 'order-alphabetical,important,ids,font-sizes,floats';
-        $processes[] = $this->asyncProc(['find', $dir, '-name', '*.css', '!', '-path', '*/vendor/*', '-exec', 'node_modules/.bin/csslint', '--ignore='.$csRules, '{}', '+']);
+        $processes['CSS checks'] = $this->asyncProc(['find', $dir, '-name', '*.css', '!', '-path', '*/vendor/*', '-exec', 'node_modules/.bin/csslint', '--ignore='.$csRules, '{}', '+']);
 
-        foreach ($processes as $process) {
+        foreach ($processes as $label => $process) {
+            echo $label;
+
             $process->wait();
-
             if (!$process->isSuccessful()) {
                 throw new ProcessFailedException($process);
             }
