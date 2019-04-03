@@ -31,7 +31,7 @@ final class LintCommand extends Command
         $syncP = new Process(['csslint']);
         $syncP->run();
         echo $syncP->getOutput();
-        $processes[] = $this->asyncProc(['find', $dir, '-name', '*.css', '!', '-path', '*/vendor/*', '-exec', 'csslint', '{}', ';']);
+        $processes[] = $this->asyncProc(['find', $dir, '-name', '*.css', '!', '-path', '*/vendor/*', '-exec', 'node_modules/.bin/csslint', '{}', ';']);
         
         foreach ($processes as $process) {
             $process->wait();
