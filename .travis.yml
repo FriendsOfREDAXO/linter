@@ -10,4 +10,4 @@ before_install:
 
 script:
   - composer install
-  - php bin/rexlint
+  - php bin/rexlint -vvv
