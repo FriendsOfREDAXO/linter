@@ -34,17 +34,22 @@ final class LintCommand extends Command
         $csRules = 'order-alphabetical,important,ids,font-sizes,floats';
         $processes['CSS checks'] = $this->asyncProc(['find', $dir, '-name', '*.css', '!', '-path', '*/vendor/*', '-exec', 'node_modules/.bin/csslint', '--ignore='.$csRules, '{}', '+']);
 
+        $exit = 0;
         foreach ($processes as $label => $process) {
             $style->section($label);
 
             $process->wait();
             if (!$process->isSuccessful()) {
-                throw new ProcessFailedException($process);
+                echo $process->getErrorOutput();
+                $style->error("failed\n");
+                $exit = 1;
+            } else {
+                echo $process->getOutput();
+                $style->success("successfull\n");
             }
-
-            echo $process->getOutput();
-            $style->success("successfull\n");
         }
+
+        return $exit;
     }
 
     private function asyncProc(array $cmd)
