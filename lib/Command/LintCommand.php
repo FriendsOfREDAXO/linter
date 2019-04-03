@@ -23,6 +23,9 @@ final class LintCommand extends Command
         // the "+" on "find ... -exec" makes the find command fail, when the -exec'ed command fails.
         $dir = $input->getArgument('dir');
 
+        /**
+         * @var $processes Process[]
+         */
         $processes = [];
         $processes['YAML checks'] = $this->asyncProc(['find', $dir, '-name', '*.yml', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/yaml-lint', '{}', '+']);
         $processes['PHP checks'] = $this->asyncProc(['vendor/bin/parallel-lint', '--exclude',  'vendor', $dir]);
@@ -42,18 +45,18 @@ final class LintCommand extends Command
             if (!$process->isSuccessful()) {
                 echo $process->getOutput();
                 echo $process->getErrorOutput();
-                $style->error("failed\n");
+                $style->error("$label failed\n");
                 $exit = 1;
             } else {
                 echo $process->getOutput();
-                $style->success("successfull\n");
+                $style->success("$label successfull\n");
             }
         }
 
         return $exit;
     }
 
-    private function asyncProc(array $cmd)
+    private function asyncProc(array $cmd): Process
     {
         $process = new Process($cmd);
         $process->start();
