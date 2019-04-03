@@ -25,7 +25,10 @@ final class LintCommand extends Command
         //$processes[] = $this->asyncProc(['vendor/bin/parallel-lint', '--exclude',  'vendor', $dir]);
         //$processes[] = $this->asyncProc(['find', $dir, '-name', '*.json', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/jsonlint', '{}', ';']);
 
-        $syncP = new Process(['npm', 'install', 'csslint']);
+        $syncP = new Process(['npm', 'install', '-v', 'csslint']);
+        $syncP->run();
+        echo $syncP->getOutput();
+        $syncP = new Process(['csslint']);
         $syncP->run();
         echo $syncP->getOutput();
         $processes[] = $this->asyncProc(['find', $dir, '-name', '*.css', '!', '-path', '*/vendor/*', '-exec', 'csslint', '{}', ';']);
