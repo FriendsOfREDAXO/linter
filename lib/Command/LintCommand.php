@@ -25,21 +25,11 @@ final class LintCommand extends Command
         //$processes[] = $this->asyncProc(['vendor/bin/parallel-lint', '--exclude',  'vendor', $dir]);
         //$processes[] = $this->asyncProc(['find', $dir, '-name', '*.json', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/jsonlint', '{}', ';']);
 
-        $syncP = new Process(['npm', 'install', 'csslint']);
-        $syncP->run();
-        if (!$syncP->isSuccessful()) {
-            throw new ProcessFailedException($syncP);
-        }
-        echo $syncP->getOutput();
+        $this->syncProc(['npm', 'install', 'csslint']);
 
-        $syncP = new Process(['find', $dir, '-name', '*.css']);
-        $syncP->run();
-        if (!$syncP->isSuccessful()) {
-            throw new ProcessFailedException($syncP);
-        }
-        echo $syncP->getOutput();
-
-        $processes[] = $this->asyncProc(['find', $dir, '-name', '*.css', '!', '-path', '*/vendor/*', '-exec', 'node_modules/.bin/csslint', '--ignore', 'order-alphabetical,important,ids,font-sizes,floats', '{}', ';', '2>&1']);
+        // we only want to find errors, no style checks
+        $csRules = 'order-alphabetical,important,ids,font-sizes,floats';
+        $processes[] = $this->asyncProc(['find', $dir, '-name', '*.css', '!', '-path', '*/vendor/*', '-exec', 'node_modules/.bin/csslint', '--ignore', $csRules, '{}', ';', '2>&1']);
         
         foreach ($processes as $process) {
             $process->wait();
@@ -57,5 +47,14 @@ final class LintCommand extends Command
         $process = new Process($cmd);
         $process->start();
         return $process;
+    }
+
+    private function syncProc(array $cmd) {
+        $syncP = new Process($cmd);
+        $syncP->run();
+        if (!$syncP->isSuccessful()) {
+            throw new ProcessFailedException($syncP);
+        }
+        echo $syncP->getOutput();
     }
 }
