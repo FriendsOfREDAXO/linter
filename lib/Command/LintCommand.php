@@ -32,7 +32,7 @@ final class LintCommand extends Command
         }
         echo $syncP->getOutput();
 
-        $syncP = new Process(['node_modules/.bin/csslint']);
+        $syncP = new Process(['find', $dir, '-name', '*.css']);
         $syncP->run();
         if (!$syncP->isSuccessful()) {
             throw new ProcessFailedException($syncP);
