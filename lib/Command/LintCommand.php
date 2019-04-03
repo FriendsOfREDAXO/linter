@@ -4,7 +4,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\Process;
 
@@ -24,7 +23,7 @@ final class LintCommand extends Command
         $dir = $input->getArgument('dir');
 
         /**
-         * @var $processes Process[]
+         * @var Process[]
          */
         $processes = [];
         $processes['YAML checks'] = $this->asyncProc(['find', $dir, '-name', '*.yml', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/yaml-lint', '{}', '+']);
@@ -39,16 +38,18 @@ final class LintCommand extends Command
 
         $exit = 0;
         foreach ($processes as $label => $process) {
-            $style->section($label);
-
             $process->wait();
+
             if (!$process->isSuccessful()) {
+                $style->section($label);
                 echo $process->getOutput();
                 echo $process->getErrorOutput();
                 $style->error("$label failed\n");
                 $exit = 1;
             } else {
-                echo $process->getOutput();
+                if ($output->isVerbose()) {
+                    echo $process->getOutput();
+                }
                 $style->success("$label successfull\n");
             }
         }
@@ -63,7 +64,8 @@ final class LintCommand extends Command
         return $process;
     }
 
-    private function syncProc(array $cmd) {
+    private function syncProc(array $cmd)
+    {
         $syncP = new Process($cmd);
         $syncP->mustRun();
         echo $syncP->getOutput();
