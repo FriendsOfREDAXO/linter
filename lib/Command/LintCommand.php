@@ -28,9 +28,15 @@ final class LintCommand extends Command
         $syncP = new Process(['npm', 'install', '-v', 'csslint']);
         $syncP->run();
         echo $syncP->getOutput();
+        if (!$syncP->isSuccessful()) {
+            throw new ProcessFailedException($syncP);
+        }
         $syncP = new Process(['csslint']);
         $syncP->run();
         echo $syncP->getOutput();
+        if (!$syncP->isSuccessful()) {
+            throw new ProcessFailedException($syncP);
+        }
         $processes[] = $this->asyncProc(['find', $dir, '-name', '*.css', '!', '-path', '*/vendor/*', '-exec', 'node_modules/.bin/csslint', '{}', ';']);
         
         foreach ($processes as $process) {
