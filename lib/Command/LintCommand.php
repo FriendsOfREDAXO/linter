@@ -5,6 +5,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\Process;
 
 final class LintCommand extends Command
@@ -18,6 +19,7 @@ final class LintCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $style = new SymfonyStyle($input, $output);
         // the "+" on "find ... -exec" makes the find command fail, when the -exec'ed command fails.
         $dir = $input->getArgument('dir');
 
@@ -33,13 +35,14 @@ final class LintCommand extends Command
         $processes['CSS checks'] = $this->asyncProc(['find', $dir, '-name', '*.css', '!', '-path', '*/vendor/*', '-exec', 'node_modules/.bin/csslint', '--ignore='.$csRules, '{}', '+']);
 
         foreach ($processes as $label => $process) {
-            echo $label;
+            $style->section($label);
 
             $process->wait();
             if (!$process->isSuccessful()) {
                 throw new ProcessFailedException($process);
             }
 
+            $style->success("successfull\n");
             echo $process->getOutput();
         }
     }
