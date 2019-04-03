@@ -11,6 +11,7 @@ cache:
 
 before_install:
   - phpenv config-rm xdebug.ini || echo "xdebug not available"
+  - nodejs -v
 
 script:
   - composer install
