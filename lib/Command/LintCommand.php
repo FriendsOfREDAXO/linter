@@ -29,7 +29,7 @@ final class LintCommand extends Command
 
         // we only want to find errors, no style checks
         $csRules = 'order-alphabetical,important,ids,font-sizes,floats';
-        $processes[] = $this->asyncProc(['find', $dir, '-name', '*.css', '!', '-path', '*/vendor/*', '-exec', 'node_modules/.bin/csslint', '--ignore', $csRules, '{}', ';', '2>&1']);
+        $processes[] = $this->asyncProc(['find', $dir, '-name', '*.css', '!', '-path', '*/vendor/*', '-exec', 'node_modules/.bin/csslint', '--ignore', $csRules, '{}', ';']);
         
         foreach ($processes as $process) {
             $process->wait();
@@ -51,10 +51,6 @@ final class LintCommand extends Command
 
     private function syncProc(array $cmd) {
         $syncP = new Process($cmd);
-        $syncP->run();
-        if (!$syncP->isSuccessful()) {
-            throw new ProcessFailedException($syncP);
-        }
-        echo $syncP->getOutput();
+        $syncP->mustRun();
     }
 }
