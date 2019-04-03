@@ -40,6 +40,7 @@ final class LintCommand extends Command
 
             $process->wait();
             if (!$process->isSuccessful()) {
+                echo $process->getOutput();
                 echo $process->getErrorOutput();
                 $style->error("failed\n");
                 $exit = 1;
