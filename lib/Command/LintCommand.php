@@ -42,8 +42,8 @@ final class LintCommand extends Command
                 throw new ProcessFailedException($process);
             }
 
-            $style->success("successfull\n");
             echo $process->getOutput();
+            $style->success("successfull\n");
         }
     }
 
