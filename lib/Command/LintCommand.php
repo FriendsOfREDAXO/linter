@@ -53,5 +53,6 @@ final class LintCommand extends Command
     private function syncProc(array $cmd) {
         $syncP = new Process($cmd);
         $syncP->mustRun();
+        echo $syncP->getOutput();
     }
 }
