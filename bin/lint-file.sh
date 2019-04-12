@@ -1,7 +1,5 @@
 #!/usr/bin/env sh
 
-# give you the full directory name of the script no matter where it is being called from
-# stolen from https://stackoverflow.com/a/246128
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+## wrapper bash file which allows to pass a filepath to lint-query
 
-cat "$1" | "$DIR/../vendor/bin/lint-query"
+cat "$1" | vendor/bin/lint-query
