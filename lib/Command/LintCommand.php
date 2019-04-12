@@ -47,7 +47,7 @@ final class LintCommand extends Command
         $processes[] = [
             self::ERR_SQL,
             'SQL checks',
-            $this->asyncProc(['find', $dir, '-name', '*.sql', '!', '-path', '*/vendor/*', '-exec', 'cat', '{}', '|', 'vendor/bin/lint-query', '+'])
+            $this->asyncProc(['find', $dir, '-name', '*.sql', '!', '-path', '*/vendor/*', '-exec', 'bin/lint-file', '{}', '+'])
         ];
 
         $this->syncProc(['npm', 'install', 'csslint']);
