@@ -8,5 +8,5 @@ before_install:
 
 script:
   - composer install
-  - php bin/rexlint tests/fail/json/ > /dev/null 2>&1 ; if [ $? -ne 0 ]; then echo "expected fail" || exit 50; fi
+  - php bin/rexlint tests/fail/json/ > /dev/null 2>&1 ; if [ $? -ne 0 ]; then echo "expected fail" && exit 50; fi
   - php bin/rexlint tests/succeed/
