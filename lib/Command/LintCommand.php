@@ -13,6 +13,7 @@ final class LintCommand extends Command
     public const ERR_PHP = 2;
     public const ERR_JSON = 4;
     public const ERR_CSS = 8;
+    public const ERR_SQL = 16;
 
     protected function configure()
     {
@@ -42,6 +43,11 @@ final class LintCommand extends Command
             self::ERR_JSON,
             'JSON checks',
             $this->asyncProc(['find', $dir, '-type', 'f', '-name', '*.json', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/jsonlint', '{}', '+']),
+        ];
+        $processes[] = [
+            self::ERR_SQL,
+            'SQL checks',
+            $this->asyncProc(['find', $dir, '-name', '*.sql', '!', '-path', '*/vendor/*', '-exec', './bin/lint-file.sh', '{}', '+'])
         ];
 
         $this->syncProc(['npm', 'install', 'csslint']);
@@ -79,7 +85,9 @@ final class LintCommand extends Command
                 $exit = $exit | $exitCode;
             } else {
                 if ($output->isVerbose()) {
+                    echo $process->getCommandLine()."\n";
                     echo $process->getOutput();
+                    echo $process->getErrorOutput();
                 }
                 $style->success("$label successfull\n");
             }
