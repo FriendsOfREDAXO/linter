@@ -2,12 +2,14 @@ language: php
 
 php:
   - '7.1'
-  - '7.2'
-  - '7.3'
 
 before_install:
   - phpenv config-rm xdebug.ini || echo "xdebug not available"
 
 script:
   - composer install
-  - php bin/rexlint
+  - php bin/rexlint tests/fail/yml/  > /dev/null 2>&1 ; lintstatus=$?; if [ $lintstatus -ne 1 ]; then echo "expected fail, got $lintstatus" && exit 50; fi
+  - php bin/rexlint tests/fail/php/  > /dev/null 2>&1 ; lintstatus=$?; if [ $lintstatus -ne 2 ]; then echo "expected fail, got $lintstatus" && exit 50; fi
+  - php bin/rexlint tests/fail/json/ > /dev/null 2>&1 ; lintstatus=$?; if [ $lintstatus -ne 4 ]; then echo "expected fail, got $lintstatus" && exit 50; fi
+  - php bin/rexlint tests/fail/mixed/ > /dev/null 2>&1 ; lintstatus=$?; if [ $lintstatus -ne 7 ]; then echo "expected fail, got $lintstatus" && exit 50; fi
+  - php bin/rexlint tests/succeed/

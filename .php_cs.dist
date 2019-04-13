@@ -2,6 +2,7 @@
 $src = __DIR__;
 
 $finder = PhpCsFixer\Finder::create()
+    ->exclude('tests')
     ->in($src)
 ;
 return PhpCsFixer\Config::create()
