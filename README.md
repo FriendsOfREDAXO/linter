@@ -7,6 +7,8 @@ Aktuell werden folgende Dateien überprüft:
 - PHP Dateien
 - YAML Dateien
 - JSON Dateien
+- SQL  Dateien
+- CSS Dateien
 
 ## Setup
 
