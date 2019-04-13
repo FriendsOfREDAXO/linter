@@ -85,7 +85,9 @@ final class LintCommand extends Command
                 $exit = $exit | $exitCode;
             } else {
                 if ($output->isVerbose()) {
+                    echo $process->getCommandLine()."\n";
                     echo $process->getOutput();
+                    echo $process->getErrorOutput();
                 }
                 $style->success("$label successfull\n");
             }
