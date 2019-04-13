@@ -9,6 +9,13 @@ use Symfony\Component\Process\Process;
 
 final class LintCommand extends Command
 {
+    const
+        ERR_YAML = 1,
+        ERR_PHP = 2,
+        ERR_JSON = 4,
+        ERR_CSS = 8
+    ;
+
     protected function configure()
     {
         $this->setName('rexlint')
@@ -26,18 +33,35 @@ final class LintCommand extends Command
          * @var Process[]
          */
         $processes = [];
-        $processes['YAML checks'] = $this->asyncProc(['find', $dir, '-type', 'f', '-name', '*.yml', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/yaml-lint', '{}', '+']);
-        $processes['PHP checks'] = $this->asyncProc(['vendor/bin/parallel-lint', '--exclude',  'vendor', $dir]);
-        $processes['JSON checks'] = $this->asyncProc(['find', $dir, '-type', 'f', '-name', '*.json', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/jsonlint', '{}', '+']);
+        $processes[] = [
+            self::ERR_YAML,
+            'YAML checks',
+            $this->asyncProc(['find', $dir, '-type', 'f', '-name', '*.yml', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/yaml-lint', '{}', '+'])
+        ];
+        $processes[] = [
+            self::ERR_PHP,
+            'PHP checks',
+            $this->asyncProc(['vendor/bin/parallel-lint', '--exclude',  'vendor', $dir])
+        ];
+        $processes[] = [
+            self::ERR_JSON,
+            'JSON checks',
+            $this->asyncProc(['find', $dir, '-type', 'f', '-name', '*.json', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/jsonlint', '{}', '+'])
+        ];
 
         $this->syncProc(['npm', 'install', 'csslint']);
 
         // we only want to find errors, no style checks
         $csRules = 'order-alphabetical,important,ids,font-sizes,floats';
-        $processes['CSS checks'] = $this->asyncProc(['find', $dir, '-name', '*.css', '!', '-path', '*/vendor/*', '-exec', 'node_modules/.bin/csslint', '--ignore='.$csRules, '{}', '+']);
+        $processes[] = [
+            self::ERR_CSS,
+            'CSS checks',
+            $this->asyncProc(['find', $dir, '-name', '*.css', '!', '-path', '*/vendor/*', '-exec', 'node_modules/.bin/csslint', '--ignore='.$csRules, '{}', '+'])
+        ];
 
         $exit = 0;
-        foreach ($processes as $label => $process) {
+        foreach ($processes as $struct) {
+            list($exitCode, $label, $process) = $struct;
             $process->wait();
 
             if (!$process->isSuccessful()) {
@@ -45,7 +69,7 @@ final class LintCommand extends Command
                 echo $process->getOutput();
                 echo $process->getErrorOutput();
                 $style->error("$label failed\n");
-                $exit = 1;
+                $exit = $exit || $exitCode;
             } else {
                 if ($output->isVerbose()) {
                     echo $process->getOutput();
