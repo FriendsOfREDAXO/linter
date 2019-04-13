@@ -9,11 +9,11 @@ use Symfony\Component\Process\Process;
 
 final class LintCommand extends Command
 {
-    const
-        ERR_YAML = 1,
-        ERR_PHP = 2,
-        ERR_JSON = 4,
-        ERR_CSS = 8
+    public const
+        ERR_YAML = 1;
+    public const ERR_PHP = 2;
+    public const ERR_JSON = 4;
+    public const ERR_CSS = 8
     ;
 
     protected function configure()
@@ -36,17 +36,17 @@ final class LintCommand extends Command
         $processes[] = [
             self::ERR_YAML,
             'YAML checks',
-            $this->asyncProc(['find', $dir, '-type', 'f', '-name', '*.yml', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/yaml-lint', '{}', '+'])
+            $this->asyncProc(['find', $dir, '-type', 'f', '-name', '*.yml', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/yaml-lint', '{}', '+']),
         ];
         $processes[] = [
             self::ERR_PHP,
             'PHP checks',
-            $this->asyncProc(['vendor/bin/parallel-lint', '--exclude',  'vendor', $dir])
+            $this->asyncProc(['vendor/bin/parallel-lint', '--exclude',  'vendor', $dir]),
         ];
         $processes[] = [
             self::ERR_JSON,
             'JSON checks',
-            $this->asyncProc(['find', $dir, '-type', 'f', '-name', '*.json', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/jsonlint', '{}', '+'])
+            $this->asyncProc(['find', $dir, '-type', 'f', '-name', '*.json', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/jsonlint', '{}', '+']),
         ];
 
         $this->syncProc(['npm', 'install', 'csslint']);
@@ -56,15 +56,17 @@ final class LintCommand extends Command
         $processes[] = [
             self::ERR_CSS,
             'CSS checks',
-            $this->asyncProc(['find', $dir, '-name', '*.css', '!', '-path', '*/vendor/*', '-exec', 'node_modules/.bin/csslint', '--ignore='.$csRules, '{}', '+'])
+            $this->asyncProc(['find', $dir, '-name', '*.css', '!', '-path', '*/vendor/*', '-exec', 'node_modules/.bin/csslint', '--ignore='.$csRules, '{}', '+']),
         ];
 
         $exit = 0;
         foreach ($processes as $struct) {
-            /**
-             * @var $process Process
-             */
-            list($exitCode, $label, $process) = $struct;
+            [
+                $exitCode,
+                $label,
+                $process
+            ] = $struct;
+
             $process->wait();
 
             $succeed = $process->isSuccessful();
