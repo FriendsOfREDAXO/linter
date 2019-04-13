@@ -9,12 +9,10 @@ use Symfony\Component\Process\Process;
 
 final class LintCommand extends Command
 {
-    public const
-        ERR_YAML = 1;
+    public const ERR_YAML = 1;
     public const ERR_PHP = 2;
     public const ERR_JSON = 4;
-    public const ERR_CSS = 8
-    ;
+    public const ERR_CSS = 8;
 
     protected function configure()
     {
@@ -29,9 +27,6 @@ final class LintCommand extends Command
         // the "+" on "find ... -exec" makes the find command fail, when the -exec'ed command fails.
         $dir = $input->getArgument('dir');
 
-        /**
-         * @var Process[]
-         */
         $processes = [];
         $processes[] = [
             self::ERR_YAML,
@@ -41,7 +36,7 @@ final class LintCommand extends Command
         $processes[] = [
             self::ERR_PHP,
             'PHP checks',
-            $this->asyncProc(['vendor/bin/parallel-lint', '--exclude',  'vendor', $dir]),
+            $this->asyncProc(['vendor/bin/parallel-lint', '--exclude', 'vendor', $dir]),
         ];
         $processes[] = [
             self::ERR_JSON,
