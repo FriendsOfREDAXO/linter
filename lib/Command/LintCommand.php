@@ -61,10 +61,20 @@ final class LintCommand extends Command
 
         $exit = 0;
         foreach ($processes as $struct) {
+            /**
+             * @var $process Process
+             */
             list($exitCode, $label, $process) = $struct;
             $process->wait();
 
-            if (!$process->isSuccessful()) {
+            $succeed = $process->isSuccessful();
+            if ($exitCode == self::ERR_PHP) {
+                if (strpos($process->getOutput(), 'No file found to check') !== false) {
+                    $succeed = true;
+                }
+            }
+
+            if (!$succeed) {
                 $style->section($label);
                 echo $process->getOutput();
                 echo $process->getErrorOutput();
