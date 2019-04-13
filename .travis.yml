@@ -8,9 +8,9 @@ before_install:
 
 script:
   - composer install
-  - php bin/rexlint tests/fail/yml/   > /dev/null 2>&1 ; lintstatus=$?; if [ $lintstatus -ne  1 ]; then echo "expected fail, got $lintstatus" && exit 50; fi
-  - php bin/rexlint tests/fail/php/   > /dev/null 2>&1 ; lintstatus=$?; if [ $lintstatus -ne  2 ]; then echo "expected fail, got $lintstatus" && exit 50; fi
-  - php bin/rexlint tests/fail/json/  > /dev/null 2>&1 ; lintstatus=$?; if [ $lintstatus -ne  4 ]; then echo "expected fail, got $lintstatus" && exit 50; fi
-  - php bin/rexlint tests/fail/sql/   > /dev/null 2>&1 ; lintstatus=$?; if [ $lintstatus -ne 16 ]; then echo "expected fail, got $lintstatus" && exit 50; fi
-  - php bin/rexlint tests/fail/mixed/ > /dev/null 2>&1 ; lintstatus=$?; if [ $lintstatus -ne  7 ]; then echo "expected fail, got $lintstatus" && exit 50; fi
+  - php bin/rexlint tests/fail/yml/   ; lintstatus=$?; if [ $lintstatus -ne  1 ]; then echo "expected fail, got $lintstatus" && exit 50; fi
+  - php bin/rexlint tests/fail/php/   ; lintstatus=$?; if [ $lintstatus -ne  2 ]; then echo "expected fail, got $lintstatus" && exit 50; fi
+  - php bin/rexlint tests/fail/json/  ; lintstatus=$?; if [ $lintstatus -ne  4 ]; then echo "expected fail, got $lintstatus" && exit 50; fi
+  - php bin/rexlint tests/fail/sql/   ; lintstatus=$?; if [ $lintstatus -ne 16 ]; then echo "expected fail, got $lintstatus" && exit 50; fi
+  - php bin/rexlint tests/fail/mixed/ ; lintstatus=$?; if [ $lintstatus -ne  7 ]; then echo "expected fail, got $lintstatus" && exit 50; fi
   - php bin/rexlint tests/succeed/
