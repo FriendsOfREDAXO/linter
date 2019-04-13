@@ -2,12 +2,10 @@ language: php
 
 php:
   - '7.1'
-  - '7.2'
-  - '7.3'
 
 before_install:
   - phpenv config-rm xdebug.ini || echo "xdebug not available"
 
 script:
   - composer install
-  - php bin/rexlint
+  - php bin/rexlint tests/fail/json/ > /dev/null > 2&1; if [ $? -ne 1 ]; exit "expected fail, got $?"; fi
