@@ -69,7 +69,7 @@ final class LintCommand extends Command
                 echo $process->getOutput();
                 echo $process->getErrorOutput();
                 $style->error("$label failed\n");
-                $exit = $exit || $exitCode;
+                $exit = $exit | $exitCode;
             } else {
                 if ($output->isVerbose()) {
                     echo $process->getOutput();
