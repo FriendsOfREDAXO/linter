@@ -50,6 +50,7 @@ final class LintCommand extends Command
             $this->asyncProc(['find', $dir, '-name', '*.sql', '!', '-path', '*/vendor/*', '-exec', './bin/lint-file.sh', '{}', '+'])
         ];
 
+        /*
         $this->syncProc(['npm', 'install', 'csslint']);
 
         // we only want to find errors, no style checks
@@ -59,6 +60,7 @@ final class LintCommand extends Command
             'CSS checks',
             $this->asyncProc(['find', $dir, '-name', '*.css', '!', '-path', '*/vendor/*', '-exec', 'node_modules/.bin/csslint', '--ignore='.$csRules, '{}', '+']),
         ];
+        */
 
         $exit = 0;
         foreach ($processes as $struct) {
