@@ -29,13 +29,6 @@ final class LintCommand extends Command
         $style = new SymfonyStyle($input, $output);
         $dir = $input->getArgument('dir');
 
-        $processes = [];
-		// yaml only supports one file at a time, therefore we use xargs
-        $processes[] = [
-            self::ERR_YAML,
-            'YAML checks',
-            $this->asyncProc(['find', $dir, '-type', 'f', '-name', '*.yml', '!', '-path', '*/vendor/*', '-print0', '|', 'xargs', '-0', '-n1', 'vendor/bin/yaml-lint']),
-        ];
         $processes[] = [
             self::ERR_PHP,
             'PHP checks',
@@ -94,10 +87,55 @@ final class LintCommand extends Command
                 $style->success("$label successfull\n");
             }
         }
-
+		
+		// yaml only supports one file at a time
+		$succeeded = $this->syncFindExec(['find', $dir, '-type', 'f', '-name', '*.yml', '!', '-path', '*/vendor/*'], ['vendor/bin/yaml-lint']);
+		
+		if (!$succeed) {
+			$style->section('YAML checks');
+			$style->error("$label failed\n");
+			$exit = $exit | self::ERR_YAML;
+		} else {
+			$style->success("$label successfull\n");
+		}
+		
         return $exit;
     }
+	
+    private function syncFindExec(array $findCmd, array $execCmd)
+    {
+		$processes = array();
 
+        $process = new Process($findCmd);
+        $process->mustRun(function($type, $buffer) use ($processes, $execCmd) {
+			if (Process::ERR === $type) {				
+				throw new Exception($buffer);
+			} else {
+				foreach(explode("\n", trim($buffer)) as $ymlFile) {
+					$cmd = $execCmd;
+					$cmd[] = $ymlFile;
+					
+					$process = new Process($cmd);
+					$process->start();
+					$processes[] = $process;
+				}
+			}
+		});
+		
+		foreach ($processes as $subProcess) {
+			$subProcess->wait();
+			
+			if (!$subProcess->isSuccessful()) {
+				echo $subProcess->getCommandLine()."\n";
+				echo $subProcess->getOutput();
+				echo $subProcess->getErrorOutput();
+				
+				return false;
+			}
+		}
+        return true;
+    }
+	
     private function asyncProc(array $cmd): Process
     {
         $process = new Process($cmd);
