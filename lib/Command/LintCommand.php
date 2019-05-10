@@ -107,7 +107,7 @@ final class LintCommand extends Command
 		$processes = array();
 
         $process = new Process($findCmd);
-        $process->mustRun(function($type, $buffer) use ($processes, $execCmd) {
+        $process->mustRun(function($type, $buffer) use (&$processes, $execCmd) {
 			if (Process::ERR === $type) {				
 				throw new Exception($buffer);
 			} else {
