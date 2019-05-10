@@ -24,8 +24,9 @@ final class LintCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-		// some lecture on "find -exec vs. find | xargs"
-		// https://www.everythingcli.org/find-exec-vs-find-xargs/
+        // some lecture on "find -exec vs. find | xargs"
+        // https://www.everythingcli.org/find-exec-vs-find-xargs/
+
         $style = new SymfonyStyle($input, $output);
         $dir = $input->getArgument('dir');
 
@@ -87,56 +88,55 @@ final class LintCommand extends Command
                 $style->success("$label successfull\n");
             }
         }
-		
-		// yaml only supports one file at a time
-		$label = 'YAML checks';
-		$succeed = $this->syncFindExec(['find', $dir, '-type', 'f', '-name', '*.yml', '!', '-path', '*/vendor/*'], ['vendor/bin/yaml-lint']);
-		
-		if (!$succeed) {
-			$style->section('YAML checks');
-			$style->error("$label failed\n");
-			$exit = $exit | self::ERR_YAML;
-		} else {
-			$style->success("$label successfull\n");
-		}
-		
+
+        // yaml only supports one file at a time
+        $label = 'YAML checks';
+        $succeed = $this->syncFindExec(['find', $dir, '-type', 'f', '-name', '*.yml', '!', '-path', '*/vendor/*'], ['vendor/bin/yaml-lint']);
+
+        if (!$succeed) {
+            $style->section('YAML checks');
+            $style->error("$label failed\n");
+            $exit = $exit | self::ERR_YAML;
+        } else {
+            $style->success("$label successfull\n");
+        }
+
         return $exit;
     }
-	
+
     private function syncFindExec(array $findCmd, array $execCmd)
     {
-		$processes = array();
+        $processes = [];
 
         $process = new Process($findCmd);
-        $process->mustRun(function($type, $buffer) use (&$processes, $execCmd) {
-			if (Process::ERR === $type) {				
-				throw new Exception($buffer);
-			} else {
-				foreach(explode("\n", trim($buffer)) as $ymlFile) {
-					$cmd = $execCmd;
-					$cmd[] = $ymlFile;
-					
-					$process = new Process($cmd);
-					$process->start();
-					$processes[] = $process;
-				}
-			}
-		});
-		
-		foreach ($processes as $subProcess) {
-			$subProcess->wait();
-			
-			if (!$subProcess->isSuccessful()) {
-				echo $subProcess->getCommandLine()."\n";
-				echo $subProcess->getOutput();
-				echo $subProcess->getErrorOutput();
-				
-				return false;
-			}
-		}
+        $process->mustRun(static function ($type, $buffer) use (&$processes, $execCmd) {
+            if (Process::ERR === $type) {
+                throw new Exception($buffer);
+            }
+            foreach (explode("\n", trim($buffer)) as $ymlFile) {
+                $cmd = $execCmd;
+                $cmd[] = $ymlFile;
+
+                $process = new Process($cmd);
+                $process->start();
+                $processes[] = $process;
+            }
+        });
+
+        foreach ($processes as $subProcess) {
+            $subProcess->wait();
+
+            if (!$subProcess->isSuccessful()) {
+                echo $subProcess->getCommandLine()."\n";
+                echo $subProcess->getOutput();
+                echo $subProcess->getErrorOutput();
+
+                return false;
+            }
+        }
         return true;
     }
-	
+
     private function asyncProc(array $cmd): Process
     {
         $process = new Process($cmd);
