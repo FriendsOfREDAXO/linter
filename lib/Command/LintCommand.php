@@ -32,7 +32,7 @@ final class LintCommand extends Command
         $processes[] = [
             self::ERR_YAML,
             'YAML checks',
-            $this->asyncProc(['find', $dir, '-type', 'f', '-name', '*.yml', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/yaml-lint', '{}', ';']),
+            $this->asyncProc(['find', $dir, '-type', 'f', '-name', '*.yml', '!', '-path', '*/vendor/*', '-print0', '|', 'xargs', '-0', '-n1', 'vendor/bin/yaml-lint', '{}', ';']),
         ];
         $processes[] = [
             self::ERR_PHP,
