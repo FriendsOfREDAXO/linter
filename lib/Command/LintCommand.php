@@ -24,15 +24,17 @@ final class LintCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+		// some lecture on "find -exec vs. find | xargs"
+		// https://www.everythingcli.org/find-exec-vs-find-xargs/
         $style = new SymfonyStyle($input, $output);
-        // the "+" on "find ... -exec" makes the find command fail, when the -exec'ed command fails.
         $dir = $input->getArgument('dir');
 
         $processes = [];
+		// yaml only supports one file at a time, therefore we use xargs
         $processes[] = [
             self::ERR_YAML,
             'YAML checks',
-            $this->asyncProc(['find', $dir, '-type', 'f', '-name', '*.yml', '!', '-path', '*/vendor/*', '-print0', '|', 'xargs', '-0', '-n1', 'vendor/bin/yaml-lint', '{}', ';']),
+            $this->asyncProc(['find', $dir, '-type', 'f', '-name', '*.yml', '!', '-path', '*/vendor/*', '-print0', '|', 'xargs', '-0', '-n1', 'vendor/bin/yaml-lint']),
         ];
         $processes[] = [
             self::ERR_PHP,
