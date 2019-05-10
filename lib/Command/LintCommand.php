@@ -24,16 +24,12 @@ final class LintCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        // some lecture on "find -exec vs. find | xargs"
+        // https://www.everythingcli.org/find-exec-vs-find-xargs/
+
         $style = new SymfonyStyle($input, $output);
-        // the "+" on "find ... -exec" makes the find command fail, when the -exec'ed command fails.
         $dir = $input->getArgument('dir');
 
-        $processes = [];
-        $processes[] = [
-            self::ERR_YAML,
-            'YAML checks',
-            $this->asyncProc(['find', $dir, '-type', 'f', '-name', '*.yml', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/yaml-lint', '{}', '+']),
-        ];
         $processes[] = [
             self::ERR_PHP,
             'PHP checks',
@@ -93,7 +89,52 @@ final class LintCommand extends Command
             }
         }
 
+        // yaml-lint only supports one file at a time
+        $label = 'YAML checks';
+        $succeed = $this->syncFindExec(['find', $dir, '-type', 'f', '-name', '*.yml', '!', '-path', '*/vendor/*'], ['vendor/bin/yaml-lint']);
+
+        if (!$succeed) {
+            $style->section('YAML checks');
+            $style->error("$label failed\n");
+            $exit = $exit | self::ERR_YAML;
+        } else {
+            $style->success("$label successfull\n");
+        }
+
         return $exit;
+    }
+
+    private function syncFindExec(array $findCmd, array $execCmd)
+    {
+        $processes = [];
+
+        $process = new Process($findCmd);
+        $process->mustRun(static function ($type, $buffer) use (&$processes, $execCmd) {
+            if (Process::ERR === $type) {
+                throw new Exception($buffer);
+            }
+            foreach (explode("\n", trim($buffer)) as $ymlFile) {
+                $cmd = $execCmd;
+                $cmd[] = $ymlFile;
+
+                $process = new Process($cmd);
+                $process->start();
+                $processes[] = $process;
+            }
+        });
+
+        foreach ($processes as $subProcess) {
+            $subProcess->wait();
+
+            if (!$subProcess->isSuccessful()) {
+                echo $subProcess->getCommandLine()."\n";
+                echo $subProcess->getOutput();
+                echo $subProcess->getErrorOutput();
+
+                return false;
+            }
+        }
+        return true;
     }
 
     private function asyncProc(array $cmd): Process
