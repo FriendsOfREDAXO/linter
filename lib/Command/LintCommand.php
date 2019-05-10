@@ -89,7 +89,7 @@ final class LintCommand extends Command
             }
         }
 
-        // yaml only supports one file at a time
+        // yaml-lint only supports one file at a time
         $label = 'YAML checks';
         $succeed = $this->syncFindExec(['find', $dir, '-type', 'f', '-name', '*.yml', '!', '-path', '*/vendor/*'], ['vendor/bin/yaml-lint']);
 
