@@ -10,7 +10,7 @@
         "jakub-onderka/php-parallel-lint" :"^1.0",
         "symfony/console": "^4.2",
         "symfony/process": "^4.2",
-        "phpmyadmin/sql-parser": "dev-master"
+        "phpmyadmin/sql-parser": "^5.0"
     },
 
     "autoload": {
