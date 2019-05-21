@@ -27,7 +27,7 @@ final class LintCommand extends Command
         $rootPath = dirname(__FILE__, 3);
 
         // If package vendor folder isn't available use project vendor folder
-        if (!file_exists($rootPath.'/vendor')) {
+        if (!is_dir($rootPath.'/vendor')) {
             $rootPath = dirname($rootPath, 3);
         }
 
