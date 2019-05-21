@@ -24,6 +24,15 @@ final class LintCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $rootPath = dirname(__FILE__, 3);
+
+        // If package vendor folder isn't available use project vendor folder
+        // In Dev Env the vendor-binaries folder is located in the project root
+        // If this package is loaded via composer the vendor-binaries folder is located in project root and not in linter root
+        if (!is_dir($rootPath.'/vendor')) {
+            $rootPath = dirname($rootPath, 3);
+        }
+
         // some lecture on "find -exec vs. find | xargs"
         // https://www.everythingcli.org/find-exec-vs-find-xargs/
 
@@ -33,17 +42,17 @@ final class LintCommand extends Command
         $processes[] = [
             self::ERR_PHP,
             'PHP checks',
-            $this->asyncProc(['vendor/bin/parallel-lint', '--exclude', 'vendor', $dir]),
+            $this->asyncProc([$rootPath.'/vendor/bin/parallel-lint', '--exclude', 'vendor', $dir]),
         ];
         $processes[] = [
             self::ERR_JSON,
             'JSON checks',
-            $this->asyncProc(['find', $dir, '-type', 'f', '-name', '*.json', '!', '-path', '*/vendor/*', '-exec', 'vendor/bin/jsonlint', '{}', '+']),
+            $this->asyncProc(['find', $dir, '-type', 'f', '-name', '*.json', '!', '-path', '*/vendor/*', '-exec', $rootPath.'/vendor/bin/jsonlint', '{}', '+']),
         ];
         $processes[] = [
             self::ERR_SQL,
             'SQL checks',
-            $this->asyncProc(['find', $dir, '-name', '*.sql', '!', '-path', '*/vendor/*', '-exec', dirname(__FILE__, 3) .'/bin/lint-file.sh', '{}', '+']),
+            $this->asyncProc(['find', $dir, '-name', '*.sql', '!', '-path', '*/vendor/*', '-exec',  $rootPath.'/bin/lint-file.sh', '{}', '+']),
         ];
 
         // $this->syncProc(['npm', 'install', 'csslint']);
@@ -91,7 +100,7 @@ final class LintCommand extends Command
 
         // yaml-lint only supports one file at a time
         $label = 'YAML checks';
-        $succeed = $this->syncFindExec(['find', $dir, '-type', 'f', '-name', '*.yml', '!', '-path', '*/vendor/*'], ['vendor/bin/yaml-lint']);
+        $succeed = $this->syncFindExec(['find', $dir, '-type', 'f', '-name', '*.yml', '!', '-path', '*/vendor/*'], [$rootPath.'/vendor/bin/yaml-lint']);
 
         if (!$succeed) {
             $style->section('YAML checks');
