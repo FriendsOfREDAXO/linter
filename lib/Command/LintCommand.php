@@ -27,6 +27,8 @@ final class LintCommand extends Command
         $rootPath = dirname(__FILE__, 3);
 
         // If package vendor folder isn't available use project vendor folder
+        // In Dev Env the vendor-binaries folder is located in the project root
+        // If this package is loaded via composer the vendor-binaries folder is located in project root and not in linter root
         if (!is_dir($rootPath.'/vendor')) {
             $rootPath = dirname($rootPath, 3);
         }
