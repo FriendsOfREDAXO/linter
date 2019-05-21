@@ -25,6 +25,12 @@ final class LintCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $rootPath = dirname(__FILE__, 3);
+
+        // If package vendor folder isn't available use project vendor folder
+        if (!file_exists($rootPath.'/vendor')) {
+            $rootPath = dirname($rootPath, 3);
+        }
+
         // some lecture on "find -exec vs. find | xargs"
         // https://www.everythingcli.org/find-exec-vs-find-xargs/
 
