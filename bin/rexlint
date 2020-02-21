@@ -3,6 +3,8 @@
 
 use Symfony\Component\Console\Application;
 
+set_time_limit(0);
+
 $autoloaderInWorkingDirectory = getcwd() . '/vendor/autoload.php';
 if (is_file($autoloaderInWorkingDirectory)) {
     require_once $autoloaderInWorkingDirectory;
