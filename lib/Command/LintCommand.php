@@ -42,7 +42,7 @@ final class LintCommand extends Command
         $processes[] = [
             self::ERR_PHP,
             'PHP checks',
-            $this->asyncProc([$rootPath.'/vendor/bin/parallel-lint', '--exclude', 'vendor', $dir]),
+            $this->asyncProc([$rootPath.'/vendor/bin/parallel-lint', '--exclude', 'vendor', '--exclude', '.idea', $dir]),
         ];
         $processes[] = [
             self::ERR_JSON,
