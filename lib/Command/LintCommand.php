@@ -37,7 +37,7 @@ final class LintCommand extends Command
         // https://www.everythingcli.org/find-exec-vs-find-xargs/
 
         $style = new SymfonyStyle($input, $output);
-        $dir = $input->getArgument('dir');
+        $dir = rtrim($input->getArgument('dir'), DIRECTORY_SEPARATOR);
 
         $processes[] = [
             self::ERR_PHP,
