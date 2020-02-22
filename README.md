@@ -10,7 +10,7 @@ Aktuell werden folgende Dateien überprüft:
 - SQL  Dateien
 - CSS Dateien
 
-## Setup
+## Setup in Travis CI
 
 
 ### Datei `.travis.yml` im gewünschten github repository erzeugen
@@ -48,3 +48,29 @@ Repository aktivieren:
 -> Wenn man jetzt ein neues Pull Request öffnet, laufen die Checks und man bekommt entweder ein OK oder ein KO:
 
 ![image](https://user-images.githubusercontent.com/120441/55288790-050a5b80-53bd-11e9-90aa-455464003fb8.png)
+
+
+## Setup in GithubActions
+
+```yml
+# ... snip
+
+jobs:
+
+  rex-lint:
+    name: REX Linting
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 7.1 # adjust accordingly
+        extensions: intl
+        coverage: none # disable xdebug, pcov
+    - name: Install Dependencies
+      run: composer install --prefer-dist
+    - run: |
+        composer require --dev friendsofredaxo/linter
+        vendor/bin/rexlint
+```
