@@ -1,3 +1,8 @@
+# Deprecated
+
+use https://github.com/github/super-linter instead!
+
+
 # linter
 Linter commandline für REDAXO.
 
