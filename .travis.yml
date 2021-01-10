@@ -8,6 +8,7 @@ before_install:
   - phpenv config-rm xdebug.ini || echo "xdebug not available"
 
 script:
+  # remove ignore-platform-req after all dependencies are php8 compatible
   - if [[ ${TRAVIS_PHP_VERSION:0:3} != "8.0" ]]; then composer install; fi;
   - if [[ ${TRAVIS_PHP_VERSION:0:3} == "8.0" ]]; then composer install --ignore-platform-req=php; fi;
   # negative tests
