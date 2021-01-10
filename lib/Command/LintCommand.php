@@ -39,10 +39,40 @@ final class LintCommand extends Command
         $style = new SymfonyStyle($input, $output);
         $dir = rtrim($input->getArgument('dir'), DIRECTORY_SEPARATOR);
 
+        // find recursive all vendor and .idea directories and exclude them from parallel-lint
+        $iterator = new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS);
+        $iterator = new RecursiveCallbackFilterIterator($iterator, function (SplFileInfo $current, string $path, RecursiveDirectoryIterator $iterator) {
+            if (!$current->isDir()) {
+                return false;
+            }
+
+            if (in_array($current->getFilename(), ['vendor', '.idea'], true)) {
+                return true;
+            }
+
+            if (!$iterator->hasChildren()) {
+                return false;
+            }
+
+            return false === strpos($path, '/vendor/') && false === strpos($path, '/.idea/');
+        });
+        $iterator = new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::SELF_FIRST);
+
+        $proc = [$rootPath.'/vendor/bin/parallel-lint'];
+        foreach($iterator as $path => $current){
+            if (!in_array($current->getFilename(), ['vendor', '.idea'], true)) {
+                continue;
+            }
+
+            $proc[] = '--exclude';
+            $proc[] = $path;
+        }
+        $proc[] = $dir;
+
         $processes[] = [
             self::ERR_PHP,
             'PHP checks',
-            $this->asyncProc([$rootPath.'/vendor/bin/parallel-lint', '--exclude', $dir.'/vendor', '--exclude', $dir.'/.idea', $dir]),
+            $this->asyncProc($proc),
         ];
         $processes[] = [
             self::ERR_JSON,
