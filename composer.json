@@ -8,8 +8,8 @@
         "seld/jsonlint": "^1.7",
         "j13k/yaml-lint": "^1.1",
         "php-parallel-lint/php-parallel-lint": "^1.1",
-        "symfony/console": "^4.2 || ^5.0",
-        "symfony/process": "^4.2 || ^5.0",
+        "symfony/console": "^4.2 || ^5.0 || ^6.0",
+        "symfony/process": "^4.2 || ^5.0 || ^6.0",
         "phpmyadmin/sql-parser": "^5.0"
     },
 
