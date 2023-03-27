@@ -1,6 +1,6 @@
 # Deprecated
 
-use https://github.com/github/super-linter instead!
+use https://github.com/github/super-linter or https://github.com/FriendsOfREDAXO/rexstan instead!
 
 
 # linter
